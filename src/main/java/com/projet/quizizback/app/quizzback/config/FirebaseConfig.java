@@ -23,27 +23,43 @@ public class FirebaseConfig {
         ClassPathResource serviceAccount = new ClassPathResource("quiziz-reactnative-firebase.json");
         log.info("Service account file exists: {}", serviceAccount.exists());
 
-        FirebaseOptions options = new FirebaseOptions.Builder()
-                .setCredentials(GoogleCredentials.fromStream(serviceAccount.getInputStream()))
-                .build();
-
-        if (FirebaseApp.getApps().isEmpty()) {
-            log.info("Firebase App initialized successfully.");
-            return FirebaseApp.initializeApp(options);
+        if (!serviceAccount.exists()) {
+            log.error("Service account file not found!");
+            throw new IOException("Service account file not found!");
         }
-        log.info("Firebase App already initialized.");
-        return FirebaseApp.getInstance();
+
+        try {
+            FirebaseOptions options = new FirebaseOptions.Builder()
+                    .setCredentials(GoogleCredentials.fromStream(serviceAccount.getInputStream()))
+                    .build();
+
+            if (FirebaseApp.getApps().isEmpty()) {
+                FirebaseApp app = FirebaseApp.initializeApp(options);
+                log.info("Firebase App initialized successfully. App name: {}", app.getName());
+                return app;
+            }
+            FirebaseApp app = FirebaseApp.getInstance();
+            log.info("Firebase App already initialized. App name: {}", app.getName());
+            return app;
+        } catch (IOException e) {
+            log.error("Error initializing Firebase App", e);
+            throw e;
+        }
     }
 
     @Bean
     public Firestore firestore(FirebaseApp firebaseApp) {
         log.info("Creating Firestore bean...");
-        return FirestoreClient.getFirestore(firebaseApp);
+        Firestore firestore = FirestoreClient.getFirestore(firebaseApp);
+        log.info("Firestore bean created successfully.");
+        return firestore;
     }
 
     @Bean
     public FirebaseAuth firebaseAuth(FirebaseApp firebaseApp) {
         log.info("Initializing FirebaseAuth...");
-        return FirebaseAuth.getInstance(firebaseApp);
+        FirebaseAuth auth = FirebaseAuth.getInstance(firebaseApp);
+        log.info("FirebaseAuth initialized successfully.");
+        return auth;
     }
 }

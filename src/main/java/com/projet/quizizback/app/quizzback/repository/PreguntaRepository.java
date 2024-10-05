@@ -40,4 +40,15 @@ public class PreguntaRepository {
                 .map(doc -> doc.toObject(Pregunta.class))
                 .collect(Collectors.toList());
     }
+
+    public List<Pregunta> obtenerPreguntasPorQuizId(String quizId) throws ExecutionException, InterruptedException {
+        return firestore.collection("preguntas")
+                .whereEqualTo("quizId", quizId)
+                .get()
+                .get()
+                .getDocuments()
+                .stream()
+                .map(doc -> doc.toObject(Pregunta.class))
+                .collect(Collectors.toList());
+    }
 }

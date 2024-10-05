@@ -2,7 +2,6 @@ package com.projet.quizizback.app.quizzback.repository;
 
 import com.google.cloud.firestore.Firestore;
 import com.projet.quizizback.app.quizzback.entity.Quiz;
-import com.projet.quizizback.app.quizzback.entity.Resultado;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -34,5 +33,6 @@ public class QuizRepository {
                 .map(doc -> doc.toObject(Quiz.class))
                 .collect(Collectors.toList());
     }
+
 
 }
