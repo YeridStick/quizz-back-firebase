@@ -4,7 +4,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import com.google.firebase.auth.UserRecord;
-import com.projet.quizizback.app.quizzback.entity.Quiz;
 import com.projet.quizizback.app.quizzback.entity.Usuario;
 import com.projet.quizizback.app.quizzback.exception.InvalidRefreshTokenException;
 import com.projet.quizizback.app.quizzback.repository.UsuarioRepository;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
@@ -106,11 +104,4 @@ public class AuthService {
         return usuarioRepository.findById(uid);
     }
 
-
-    public void ejmplo(Quiz quizelement) {
-        Quiz quiz = new Quiz();
-        if (quizelement.getCreadorId() != null) {
-            
-        }
-    }
 }
