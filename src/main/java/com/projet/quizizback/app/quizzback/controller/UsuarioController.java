@@ -10,6 +10,7 @@ import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/api/usuarios")
+@CrossOrigin("*")
 public class UsuarioController {
     private final UsuarioService usuarioService;
 

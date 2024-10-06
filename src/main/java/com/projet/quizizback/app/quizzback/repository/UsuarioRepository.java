@@ -43,5 +43,19 @@ public class UsuarioRepository {
                 .collect(Collectors.toList());
     }
 
+    public Usuario findByEmail(String email) throws ExecutionException, InterruptedException {
+        log.info("Fetching user by email: {}", email);
+        ApiFuture<QuerySnapshot> future = firestore.collection("usuarios")
+                .whereEqualTo("email", email)
+                .limit(1)
+                .get();
+        List<QueryDocumentSnapshot> documents = future.get().getDocuments();
+        if (!documents.isEmpty()) {
+            log.info("User found with email: {}", email);
+            return documents.get(0).toObject(Usuario.class);
+        }
+        log.info("No user found with email: {}", email);
+        return null;
+    }
     // Otros métodos según necesites
 }

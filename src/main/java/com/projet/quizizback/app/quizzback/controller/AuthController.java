@@ -15,6 +15,7 @@ import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin("*")
 public class AuthController {
     private final AuthService authService;
 
@@ -35,7 +36,8 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         try {
-            Map<String, String> tokens = authService.login(request.getEmail(), request.getPassword());
+            Map<String, Object> tokens = authService.login(request.getEmail(), request.getPassword());
+
             return ResponseEntity.ok(tokens);
         } catch (FirebaseAuthException e) {
             return ResponseEntity.badRequest().body("Error de autenticación: " + e.getMessage());

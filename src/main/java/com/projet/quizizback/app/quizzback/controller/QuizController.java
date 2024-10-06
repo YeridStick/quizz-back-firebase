@@ -3,6 +3,7 @@ package com.projet.quizizback.app.quizzback.controller;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import com.opencsv.exceptions.CsvException;
+import com.projet.quizizback.app.quizzback.dto.QuizUploadRequest;
 import com.projet.quizizback.app.quizzback.entity.Pregunta;
 import com.projet.quizizback.app.quizzback.entity.Quiz;
 import com.projet.quizizback.app.quizzback.services.imp.CsvService;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -24,6 +26,7 @@ import java.util.concurrent.ExecutionException;
 @RestController
 @Slf4j
 @RequestMapping("/api/quizzes")
+@CrossOrigin("*")
 public class QuizController {
     private final QuizService quizService;
     private final CsvService csvService;
@@ -54,16 +57,13 @@ public class QuizController {
         return ResponseEntity.ok(quizService.crearQuiz(quiz));
     }
 
-    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> uploadQuizWithQuestions(
-            @RequestParam("creadorId") String creadorId,
-            @RequestParam("file") MultipartFile file,
-            @RequestParam("titulo") String titulo,
-            @RequestParam("descripcion") String descripcion) {
+    @PostMapping(value = "/upload", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> uploadQuizWithQuestions(@RequestBody QuizUploadRequest request) {
         try {
-            Quiz quiz = csvService.processCsvFile(creadorId, file, titulo, descripcion);
+            byte[] decodedBytes = Base64.getDecoder().decode(request.getFileContent());
+            Quiz quiz = csvService.processCsvFile(request.getCreadorId(), decodedBytes, request.getFileName(), request.getTitulo(), request.getDescripcion());
             return ResponseEntity.ok(quiz);
-        } catch (IOException | CsvException | ExecutionException | InterruptedException e) {
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error al procesar el archivo: " + e.getMessage());
         }
     }
